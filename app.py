@@ -77,6 +77,7 @@ def calculate_calories(food_type, radius_cm):
     calories = weight * calories_per_g
     return weight, calories
 
+
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
