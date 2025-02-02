@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +11,7 @@
             text-align: center;
             margin: 50px;
         }
+
         .container {
             max-width: 600px;
             margin: auto;
@@ -18,15 +20,32 @@
             border-radius: 10px;
             background-color: #f9f9f9;
         }
+
         input[type="file"] {
             margin: 20px 0;
         }
+
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
         img {
             max-width: 100%;
             height: auto;
             margin-top: 20px;
             border-radius: 10px;
         }
+
         .result {
             margin-top: 20px;
             padding: 10px;
@@ -34,8 +53,22 @@
             background-color: #fff;
             border-radius: 10px;
         }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        .accuracy {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: #e9ecef;
+            border-radius: 10px;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>Upload an Image to Estimate Calories</h2>
@@ -46,19 +79,44 @@
         </form>
 
         {% if error %}
-            <p style="color: red;">{{ error }}</p>
+        <p class="error">{{ error }}</p>
         {% endif %}
 
         {% if food_type %}
-            <div class="result">
-                <h3>Results</h3>
-                <p><strong>Food:</strong> {{ food_type }}</p>
-                <!-- <p><strong>Estimated Radius:</strong> {{ radius }}</p>
+        <div class="result">
+            <h3>Results</h3>
+            <p><strong>Food:</strong> {{ food_type }}</p>
+            <!-- <p><strong>Estimated Radius:</strong> {{ radius }}</p>
                 <p><strong>Estimated Weight:</strong> {{ weight }}</p> -->
-                <p><strong>Estimated Calories:</strong> {{ calories }}</p>
-                <img src="{{ image_url }}" alt="Uploaded Image">
-            </div>
+            <p><strong>Estimated Calories:</strong> {{ calories }}</p>
+            <img src="{{ image_url }}" alt="Uploaded Image">
+        </div>
         {% endif %}
+
+        <h2>Check Model Accuracy</h2>
+        <form id="accuracy-form">
+            <button type="button" onclick="checkAccuracy()">Check Accuracy</button>
+        </form>
+
+        <div id="accuracy-results" class="accuracy" style="display: none;">
+            <h3>Model Accuracy</h3>
+            <p><strong>Classification Accuracy:</strong> <span id="classification-accuracy"></span></p>
+            <p><strong>Calorie Estimation Error:</strong> <span id="calorie-error"></span></p>
+        </div>
     </div>
+
+    <script>
+        function checkAccuracy() {
+            fetch('/check_accuracy')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("classification-accuracy").innerText = data.classification_accuracy;
+                    document.getElementById("calorie-error").innerText = data.calorie_estimation_error;
+                    document.getElementById("accuracy-results").style.display = "block";
+                })
+                .catch(error => console.error("Error fetching accuracy:", error));
+        }
+    </script>
 </body>
+
 </html>
